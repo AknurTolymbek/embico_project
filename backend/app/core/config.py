@@ -63,6 +63,15 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_PASSWORD: str | None = None
     FIRST_SUPERUSER_ROLE: str = "reproductologist"
 
+    # ML-модели (оценка бластоцисты по фото и time-lapse морфокинетика)
+    ML_ENABLED: bool = True
+    # Папка с весами: gardner_strict_fold*.pt, cnn_convnext_best.pt, hmm_logA.npy и т.д.
+    ML_MODELS_DIR: str = "../ml-model/weights"
+    ML_DEVICE: str = "cpu"  # "cpu" или "cuda"
+    # Ограничения на загрузку файлов
+    ML_MAX_IMAGE_MB: int = 20
+    ML_MAX_TIMELAPSE_FRAMES: int = 1000
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

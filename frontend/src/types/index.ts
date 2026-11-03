@@ -7,10 +7,11 @@ export interface User {
   is_active: boolean;
 }
 
-export enum UserRole {
-  REPRODUCTOLOGIST = 'reproductologist',
-  EMBRYOLOGIST = 'embryologist',
-}
+export const UserRole = {
+  REPRODUCTOLOGIST: "reproductologist",
+  EMBRYOLOGIST: "embryologist",
+} as const;
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 export interface LoginRequest {
   email: string;
@@ -22,53 +23,47 @@ export interface TokenResponse {
   token_type: string;
 }
 
-// Patient types
-export interface Patient {
-  id: number;
+// Patient fields match backend/app/schemas/patient.py.
+export interface PatientCreate {
   medical_record_number: string;
   date_of_birth: string;
-  phone?: string;
-  diagnosis?: string;
-  attending_physician_id?: number;
-  attending_physician?: User;
+  blood_type?: string | null;
+  height?: number | string | null;
+  weight?: number | string | null;
+  amh_level?: number | string | null;
+}
+
+export interface Patient extends PatientCreate {
+  id: number;
   created_at: string;
   updated_at: string;
 }
 
-export interface PatientCreate {
-  medical_record_number: string;
-  date_of_birth: string;
-  phone?: string;
-  diagnosis?: string;
-  attending_physician_id?: number;
-}
-
-export interface PatientUpdate {
-  phone?: string;
-  diagnosis?: string;
-  attending_physician_id?: number;
-}
+export type PatientUpdate = Partial<PatientCreate>;
 
 // Cycle types
-export enum CycleType {
-  FRESH = 'fresh',
-  CRYO = 'cryo',
-}
+export const CycleType = {
+  FRESH: "fresh",
+  CRYO: "cryo",
+} as const;
+export type CycleType = (typeof CycleType)[keyof typeof CycleType];
 
-export enum CycleStatus {
-  ACTIVE = 'active',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-}
+export const CycleStatus = {
+  ACTIVE: "active",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+} as const;
+export type CycleStatus = (typeof CycleStatus)[keyof typeof CycleStatus];
 
-export enum CycleStage {
-  PREPARATION = 'preparation',
-  STIMULATION = 'stimulation',
-  RETRIEVAL = 'retrieval',
-  EMBRYOLOGY = 'embryology',
-  TRANSFER = 'transfer',
-  OUTCOME = 'outcome',
-}
+export const CycleStage = {
+  PREPARATION: "preparation",
+  STIMULATION: "stimulation",
+  RETRIEVAL: "retrieval",
+  EMBRYOLOGY: "embryology",
+  TRANSFER: "transfer",
+  OUTCOME: "outcome",
+} as const;
+export type CycleStage = (typeof CycleStage)[keyof typeof CycleStage];
 
 export interface Cycle {
   id: number;

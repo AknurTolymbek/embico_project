@@ -4,7 +4,7 @@
 """
 from fastapi import APIRouter
 
-from app.api.endpoints import patients
+from app.api.endpoints import ml, patients
 
 api_router = APIRouter()
 
@@ -13,6 +13,11 @@ api_router.include_router(
     patients.router,
     prefix="/patients",
     tags=["patients"],
+)
+api_router.include_router(
+    ml.router,
+    prefix="/ml",
+    tags=["ml"],
 )
 
 # Здесь будут подключаться другие роутеры:

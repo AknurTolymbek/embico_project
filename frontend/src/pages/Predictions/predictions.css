@@ -1,0 +1,436 @@
+.prediction-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.prediction-patient {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 13px;
+  background: #edf3ff;
+  color: #6483ba;
+  border-radius: 8px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.prediction-form {
+  overflow: hidden;
+}
+.prediction-form > .ant-tabs > .ant-tabs-nav {
+  padding: 0 24px;
+  margin: 0;
+}
+.prediction-form .ant-tabs-tab {
+  font-size: 12px;
+  padding-block: 18px;
+}
+.prediction-form-body,
+.prediction-result-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.prediction-form-body .ant-alert,
+.prediction-result-body .ant-alert {
+  font-size: 12px;
+}
+.prediction-form-body .ant-alert p {
+  line-height: 1.8;
+}
+.prediction-form-body details summary {
+  cursor: pointer;
+  font-size: 11px;
+  color: #7588a8;
+  margin-top: 10px;
+}
+.prediction-form-body details p {
+  margin-top: 9px;
+  overflow-wrap: anywhere;
+}
+.prediction-instructions strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: #496080;
+}
+.prediction-instructions p {
+  font-size: 12px;
+  line-height: 1.85;
+  color: #8a99b0;
+  margin-top: 8px;
+}
+.prediction-upload {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  gap: 9px;
+  border: 1px dashed #b9cae8;
+  background: #f8faff;
+  border-radius: 10px;
+  padding: 28px 16px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+  overflow: hidden;
+}
+.prediction-upload:hover,
+.prediction-upload:focus-within {
+  background: #eff4ff;
+  border-color: #7296df;
+}
+.prediction-upload.disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.prediction-upload > .anticon {
+  font-size: 27px;
+  color: #80a0df;
+  margin-bottom: 5px;
+}
+.prediction-upload strong {
+  font-size: 12px;
+  color: #5876aa;
+  font-weight: 550;
+}
+.prediction-upload > span:not(.anticon) {
+  font-size: 10px;
+  color: #97a5bb;
+  line-height: 1.7;
+}
+.prediction-upload input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.prediction-upload input:disabled {
+  cursor: wait;
+}
+.prediction-file-list {
+  max-height: 245px;
+  overflow-y: auto;
+  margin-top: 12px;
+  border: 1px solid #eaf0f8;
+  border-radius: 8px;
+}
+.prediction-file {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #eef2f8;
+}
+.prediction-file:last-child {
+  border-bottom: 0;
+}
+.prediction-file > .anticon {
+  font-size: 18px;
+  color: #8da8d8;
+  flex-shrink: 0;
+}
+.prediction-file > span:not(.anticon) {
+  min-width: 0;
+  flex: 1;
+}
+.prediction-file strong {
+  font-size: 11px;
+  font-weight: 500;
+  color: #687d9e;
+  display: block;
+  overflow-wrap: anywhere;
+}
+.prediction-file small {
+  font-size: 9px;
+  color: #a1adc0;
+  margin-top: 4px;
+  display: block;
+}
+.prediction-file .ant-btn {
+  flex-shrink: 0;
+  color: #93a7c6;
+}
+.prediction-hint {
+  font-size: 11px;
+  color: #96a3b8;
+  line-height: 1.85;
+}
+.prediction-field-label {
+  font-size: 12px;
+  color: #5a6f91;
+  font-weight: 500;
+  margin-bottom: -8px;
+}
+.prediction-extra {
+  border-top: 1px solid #edf1f8;
+  padding-top: 6px;
+}
+.prediction-extra summary {
+  font-size: 12px !important;
+}
+.prediction-extra .prediction-file-group {
+  margin-top: 15px;
+}
+.prediction-submit {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+.prediction-submit .ant-btn {
+  font-size: 12px;
+}
+.prediction-placeholder {
+  padding: 35px 26px;
+  text-align: center;
+}
+.prediction-placeholder .stat-icon {
+  width: 55px;
+  height: 55px;
+  font-size: 25px;
+  border-radius: 15px;
+  margin-bottom: 23px;
+}
+.prediction-placeholder h2 {
+  font-size: 17px;
+}
+.prediction-placeholder p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: #95a3ba;
+  margin: 13px auto 25px;
+  max-width: 290px;
+}
+.prediction-readiness {
+  font-size: 11px;
+  color: #8d9db5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.prediction-readiness .not-ready {
+  background: #d5b16b;
+}
+.prediction-placeholder .ant-btn {
+  margin-top: 13px;
+  font-size: 11px;
+  color: #7e97c1;
+}
+.prediction-storage-note,
+.prediction-disclaimer {
+  font-size: 11px;
+  line-height: 1.85;
+  color: #96a4bb;
+  margin-top: 18px;
+}
+.prediction-disclaimer {
+  padding: 16px;
+  background: #f0f4fb;
+  border-radius: 8px;
+}
+.prediction-result {
+  overflow: hidden;
+}
+.prediction-result .section-heading > .ant-btn {
+  font-size: 11px;
+  height: 32px;
+}
+.prediction-score {
+  padding: 23px;
+  background: #f5f8fe;
+  border: 1px solid #e9effa;
+  border-radius: 10px;
+}
+.prediction-score > span {
+  display: block;
+  font-size: 11px;
+  color: #8a9db9;
+}
+.prediction-score > strong {
+  display: block;
+  font-size: 35px;
+  font-weight: 600;
+  color: #466cae;
+  letter-spacing: -0.8px;
+  margin-top: 14px;
+  overflow-wrap: anywhere;
+}
+.prediction-confidence {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #8a9db9;
+  font-size: 11px;
+  margin: 22px 0 5px;
+}
+.prediction-confidence b {
+  color: #6484b6;
+  font-weight: 500;
+}
+.prediction-values {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.prediction-values > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12px;
+}
+.prediction-values > div > span {
+  color: #8a9bb5;
+}
+.prediction-values strong {
+  color: #5e7497;
+  font-weight: 550;
+  text-align: right;
+}
+.prediction-subheading {
+  font-size: 12px;
+  color: #5d7295;
+  font-weight: 550;
+}
+.probabilities {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.probabilities > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 10px;
+  color: #8297b7;
+}
+.probabilities > div > span {
+  flex-shrink: 0;
+  width: 35px;
+}
+.probabilities .ant-progress {
+  margin: 0;
+  flex: 1;
+}
+.probabilities .ant-progress-text {
+  display: none;
+}
+.probabilities small {
+  width: 45px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.prediction-explanation {
+  font-size: 11px;
+  color: #93a2b9;
+  line-height: 1.85;
+}
+.prediction-result-body ul {
+  padding-left: 18px;
+  margin: 5px 0;
+  line-height: 1.85;
+}
+.prediction-result-body .prediction-disclaimer {
+  margin: 0;
+}
+.prediction-version {
+  font-size: 10px;
+  color: #a1aec1;
+  overflow-wrap: anywhere;
+}
+.prediction-result .ant-table {
+  font-size: 11px;
+}
+.prediction-output .loading-panel {
+  margin: 0;
+}
+.prediction-output .loading-panel h2 {
+  margin-bottom: 25px;
+}
+.patient-prediction-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.patient-hero-actions .patient-prediction-actions .ant-btn-primary {
+  color: #fff;
+}
+@media (max-width: 1100px) {
+  .prediction-layout {
+    grid-template-columns: 1fr;
+  }
+  .prediction-placeholder {
+    padding: 27px;
+  }
+  .prediction-output {
+    min-width: 0;
+  }
+  .prediction-form-body,
+  .prediction-result-body {
+    padding: 20px;
+  }
+  .patient-prediction-actions {
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 640px) {
+  .prediction-page .page-heading p {
+    font-size: 11px;
+  }
+  .prediction-patient {
+    font-size: 10px;
+  }
+  .prediction-form > .ant-tabs > .ant-tabs-nav {
+    padding-inline: 16px;
+  }
+  .prediction-form .ant-tabs-tab {
+    font-size: 11px;
+  }
+  .prediction-form-body,
+  .prediction-result-body {
+    padding: 17px;
+    gap: 17px;
+  }
+  .prediction-values > div {
+    font-size: 11px;
+  }
+  .prediction-file {
+    gap: 6px;
+    padding: 9px;
+  }
+  .prediction-file .ant-btn {
+    width: 23px;
+    min-width: 23px;
+    padding: 0;
+  }
+  .prediction-file strong {
+    font-size: 10px;
+  }
+  .patient-hero-actions:has(.patient-prediction-actions) {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .patient-prediction-actions {
+    gap: 8px;
+  }
+}
+
+.prediction-page .ant-alert-warning {
+  background: #fff9ed;
+  border: 1px solid #f0e3c7;
+}
+.prediction-page .ant-alert-error {
+  background: #fff5f5;
+  border: 1px solid #f2dede;
+}
+.prediction-page .ant-alert-success {
+  background: #f0f9f4;
+  border: 1px solid #dceee3;
+}

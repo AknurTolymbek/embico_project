@@ -1,92 +1,69 @@
-import { Menu } from 'antd';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { NavLink } from "react-router-dom";
 import {
-  CalendarOutlined,
   TeamOutlined,
-  SyncOutlined,
   ExperimentOutlined,
-  BugOutlined,
+  SyncOutlined,
   FileTextOutlined,
-  UsergroupAddOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
+  SafetyCertificateOutlined,
+  ArrowUpOutlined,
+} from "@ant-design/icons";
 
-export const Sidebar = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { t } = useTranslation();
-
-  const menuItems = [
-    {
-      key: '/today',
-      icon: <CalendarOutlined />,
-      label: t('menu.today'),
-    },
-    {
-      key: '/patients',
-      icon: <TeamOutlined />,
-      label: t('menu.patients'),
-    },
-    {
-      key: '/cycles',
-      icon: <SyncOutlined />,
-      label: t('menu.cycles'),
-    },
-    {
-      key: '/lab',
-      icon: <ExperimentOutlined />,
-      label: t('menu.lab'),
-    },
-    {
-      key: '/embryos',
-      icon: <BugOutlined />,
-      label: t('menu.embryos'),
-    },
-    {
-      key: '/documents',
-      icon: <FileTextOutlined />,
-      label: t('menu.documents'),
-    },
-    {
-      type: 'divider',
-    },
-    {
-      key: '/team',
-      icon: <UsergroupAddOutlined />,
-      label: t('menu.team'),
-    },
-    {
-      key: '/settings',
-      icon: <SettingOutlined />,
-      label: t('menu.settings'),
-    },
-  ];
-
-  const handleMenuClick = ({ key }: { key: string }) => {
-    navigate(key);
-  };
-
-  return (
-    <div style={{ height: '100%', background: '#001529' }}>
-      <div
-        style={{
-          padding: '24px',
-          color: '#fff',
-          fontSize: '20px',
-          fontWeight: 600,
-        }}
-      >
-        EMBICO
+export const Sidebar = () => (
+  <aside className="sidebar">
+    <a className="brand" href="/patients" aria-label="EMBICO — пациенты">
+      <span className="brand-symbol">
+        <i />
+        <i />
+        <i />
+      </span>
+      <span>
+        embico<span className="brand-dot">.</span>
+        <small>FERTILITY CARE PLATFORM</small>
+      </span>
+    </a>
+    <div className="clinic-switch">
+      <span className="clinic-icon">
+        <ExperimentOutlined />
+      </span>
+      <div>
+        <strong>Рабочее пространство</strong>
+        <small>Центр репродукции</small>
       </div>
-      <Menu
-        theme="dark"
-        mode="inline"
-        selectedKeys={[location.pathname]}
-        onClick={handleMenuClick}
-        items={menuItems}
-        style={{ borderRight: 0 }}
-      />
+      <span className="online-dot" />
     </div>
-  );
-};
+    <div className="nav-caption">КЛИНИКА</div>
+    <nav className="main-nav" aria-label="Основная навигация">
+      <NavLink to="/patients" aria-label="Пациенты">
+        <TeamOutlined />
+        <span>Пациенты</span>
+        <span className="nav-indicator" />
+      </NavLink>
+      <div className="nav-caption upcoming-caption">СЛЕДУЮЩИЕ РАЗДЕЛЫ</div>
+      <span className="nav-upcoming">
+        <SyncOutlined />
+        Циклы лечения<small>Скоро</small>
+      </span>
+      <span className="nav-upcoming">
+        <ExperimentOutlined />
+        Лаборатория<small>Скоро</small>
+      </span>
+      <span className="nav-upcoming">
+        <FileTextOutlined />
+        Документы<small>Скоро</small>
+      </span>
+    </nav>
+    <div className="sidebar-bottom">
+      <div className="care-note">
+        <span className="care-orbit">✳</span>
+        <strong>Каждая история важна</strong>
+        <p>Всё необходимое для заботы о пациентах — в одном месте.</p>
+        <span className="care-caption">
+          EMBICO CARE <ArrowUpOutlined />
+        </span>
+      </div>
+      <div className="secure-label">
+        <SafetyCertificateOutlined /> Медицинские данные
+      </div>
+    </div>
+  </aside>
+);
