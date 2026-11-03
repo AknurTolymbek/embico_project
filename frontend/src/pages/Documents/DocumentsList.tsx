@@ -1,17 +1,10 @@
-import { Card, Empty, Typography } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { FileTextOutlined } from "@ant-design/icons";
+import { UnderDevelopment } from "../../components/UnderDevelopment";
 
-const { Title } = Typography;
-
-export const DocumentsList = () => {
-  const { t } = useTranslation();
-
-  return (
-    <div>
-      <Title level={2}>{t('menu.documents')}</Title>
-      <Card>
-        <Empty description="Раздел в разработке. Здесь будут протоколы циклов." />
-      </Card>
-    </div>
-  );
-};
+export const DocumentsList = () => (
+  <UnderDevelopment
+    title="Документы"
+    icon={<FileTextOutlined />}
+    description="Здесь появятся протоколы циклов, медицинские документы и материалы пациентов."
+  />
+);

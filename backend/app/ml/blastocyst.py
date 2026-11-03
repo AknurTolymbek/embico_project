@@ -38,7 +38,7 @@ def _build_gardner_net(backbone: str):
 
 
 def find_weight_files(models_dir: Path) -> tuple[str | None, list[Path]]:
-    """Ищем веса: сначала режим strict, иначе official (как SERVE_MODE в ноутбуке)."""
+    """Ищем strict, official, затем gardner_fold*.pt из раннего ноутбука."""
     for mode in C.GARDNER_MODES:
         files = [
             models_dir / C.GARDNER_WEIGHTS_PATTERN.format(mode=mode, fold=f)
@@ -47,6 +47,14 @@ def find_weight_files(models_dir: Path) -> tuple[str | None, list[Path]]:
         files = [p for p in files if p.is_file()]
         if files:
             return mode, files
+    # Ранние экспорты не указывают режим обучения: не называем их strict.
+    legacy_files = [
+        models_dir / f"gardner_fold{fold}.pt"
+        for fold in range(1, C.GARDNER_N_FOLDS + 1)
+    ]
+    legacy_files = [path for path in legacy_files if path.is_file()]
+    if legacy_files:
+        return "legacy", legacy_files
     return None, []
 
 
@@ -66,7 +74,7 @@ class BlastocystPredictor:
         mode, files = find_weight_files(models_dir)
         if not files:
             raise FileNotFoundError(
-                f"Не найдены веса gardner_strict_fold*.pt / gardner_official_fold*.pt в {models_dir}"
+                f"Не найдены веса gardner_strict_fold*.pt / gardner_official_fold*.pt / gardner_fold*.pt в {models_dir}"
             )
         models = []
         for path in files:

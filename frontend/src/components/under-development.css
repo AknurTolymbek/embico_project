@@ -1,0 +1,113 @@
+.development-panel {
+  min-height: 430px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 56px 26px;
+}
+.development-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 86px;
+  height: 86px;
+  background: #edf3ff;
+  color: #799bdb;
+  border: 1px solid #e1eafb;
+  border-radius: 24px;
+  font-size: 37px;
+  margin-bottom: 25px;
+}
+.development-icon > span:last-child {
+  position: absolute;
+  bottom: -6px;
+  right: -8px;
+  width: 31px;
+  height: 31px;
+  border: 3px solid #fff;
+  border-radius: 10px;
+  background: #e5edfc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #6f8fc9;
+}
+.development-status {
+  font-size: 10px;
+  letter-spacing: 0.3px;
+  color: #8298bb;
+  border: 1px solid #e8edf7;
+  background: #f8faff;
+  border-radius: 20px;
+  padding: 6px 12px;
+  margin-bottom: 16px;
+}
+.development-panel h2 {
+  font-size: 25px;
+  color: #344a6d;
+  letter-spacing: -0.5px;
+  font-weight: 600;
+}
+.development-panel p {
+  max-width: 390px;
+  font-size: 13px;
+  line-height: 1.9;
+  color: #8e9db3;
+  margin-top: 14px;
+}
+.development-return {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: #3266dc;
+  color: #fff;
+  padding: 12px 19px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-top: 28px;
+  transition: background 0.2s;
+}
+.development-return:hover {
+  background: #4679ec;
+  color: #fff;
+}
+.main-nav > a {
+  color: #7b8ba3;
+  transition:
+    color 0.2s,
+    background 0.2s;
+}
+.main-nav > a:hover {
+  background: #f5f8fd;
+  color: #4873c5;
+}
+.main-nav > a.active:hover {
+  background: #edf3ff;
+  color: #3266dc;
+}
+.main-nav > a:not(.active) .nav-indicator {
+  visibility: hidden;
+}
+@media (max-width: 640px) {
+  .development-panel {
+    min-height: 390px;
+    padding: 38px 20px;
+  }
+  .development-panel h2 {
+    font-size: 21px;
+  }
+  .development-panel p {
+    font-size: 12px;
+  }
+  .development-icon {
+    width: 72px;
+    height: 72px;
+    font-size: 31px;
+    border-radius: 21px;
+  }
+}

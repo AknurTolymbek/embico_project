@@ -5,6 +5,45 @@ import type { PredictionResult as Result } from "../../types/ml";
 const number = (value: number) =>
   value.toLocaleString("ru-RU", { maximumFractionDigits: 2 });
 const percent = (value: number) => `${number(value * 100)}%`;
+function ProbabilityGroup({
+  title,
+  values,
+  labels,
+  unavailable,
+}: {
+  title: string;
+  values: number[] | null;
+  labels: string[];
+  unavailable: string;
+}) {
+  return (
+    <section className="prediction-probability-group" aria-label={title}>
+      <h3 className="prediction-subheading">
+        {title}
+        {!!values?.length && <span>{percent(Math.max(...values))}</span>}
+      </h3>
+      {values?.length ? (
+        <div className="probabilities">
+          {values.map((value, index) => (
+            <div key={labels[index]}>
+              <span>{labels[index]}</span>
+              <Progress
+                percent={value * 100}
+                showInfo={false}
+                size="small"
+                strokeColor="#7195df"
+              />
+              <small>{percent(value)}</small>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="prediction-explanation">{unavailable}</p>
+      )}
+    </section>
+  );
+}
+
 export const PredictionResult = ({
   result,
   patientNumber,
@@ -68,7 +107,7 @@ export const PredictionResult = ({
         {result.kind === "blastocyst" ? (
           <>
             <div className="prediction-score">
-              <span>Оценка по шкале Гарднера</span>
+              <span>Оценка модели · EXP0–EXP4</span>
               <strong>{result.data.gardner}</strong>
               <div className="prediction-confidence">
                 <span>Уверенность модели</span>
@@ -82,7 +121,7 @@ export const PredictionResult = ({
             </div>
             <div className="prediction-values">
               {[
-                ["Экспансия", `EXP${result.data.expansion_class + 1}`],
+                ["Экспансия", `EXP${result.data.expansion_class}`],
                 [
                   "Внутренняя клеточная масса",
                   result.data.icm ?? "Не определена",
@@ -95,22 +134,37 @@ export const PredictionResult = ({
                 </div>
               ))}
             </div>
-            <h3 className="prediction-subheading">
-              Вероятности степени экспансии
-            </h3>
-            <div className="probabilities">
-              {result.data.probabilities.exp.map((value, index) => (
-                <div key={index}>
-                  <span>EXP{index + 1}</span>
-                  <Progress
-                    percent={Math.round(value * 100)}
-                    size="small"
-                    strokeColor="#7195df"
-                  />
-                  <small>{percent(value)}</small>
-                </div>
-              ))}
-            </div>
+            <p className="prediction-explanation">
+              Итоговая уверенность — минимальная уверенность среди оценённых
+              компонентов: экспансии, ВКМ (ICM) и трофэктодермы (TE). Классы
+              экспансии отображаются как в модели: EXP0–EXP4.
+            </p>
+            <ProbabilityGroup
+              title="Вероятности степени экспансии"
+              values={result.data.probabilities.exp}
+              labels={["EXP0", "EXP1", "EXP2", "EXP3", "EXP4"]}
+              unavailable="Модель не вернула вероятности экспансии."
+            />
+            <ProbabilityGroup
+              title="Вероятности ВКМ (ICM)"
+              values={result.data.probabilities.icm}
+              labels={["A", "B", "C"]}
+              unavailable={
+                result.data.expansion_class < 2
+                  ? "ВКМ не оценивается для этой стадии."
+                  : "Модель не вернула вероятности ВКМ."
+              }
+            />
+            <ProbabilityGroup
+              title="Вероятности трофэктодермы (TE)"
+              values={result.data.probabilities.te}
+              labels={["A", "B", "C"]}
+              unavailable={
+                result.data.expansion_class < 2
+                  ? "Трофэктодерма не оценивается для этой стадии."
+                  : "Модель не вернула вероятности трофэктодермы."
+              }
+            />
           </>
         ) : (
           <>

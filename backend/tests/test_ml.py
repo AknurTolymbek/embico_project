@@ -140,6 +140,25 @@ async def test_status_finds_weight_files(client, tmp_path):
 # ---------------------------------------------------------------------------
 # Недоступность модели → 503
 # ---------------------------------------------------------------------------
+async def test_status_finds_legacy_gardner_weights(client, tmp_path):
+    for fold in range(1, 6):
+        (tmp_path / f"gardner_fold{fold}.pt").touch()
+
+    body = (await client.get(f"{ML}/status")).json()["blastocyst"]
+    assert body["weights_found"] is True
+    assert body["mode"] == "legacy"
+    assert body["files"] == [f"gardner_fold{fold}.pt" for fold in range(1, 6)]
+    assert body["missing_files"] == []
+
+
+async def test_named_gardner_weights_take_priority_over_legacy(client, tmp_path):
+    (tmp_path / "gardner_fold1.pt").touch()
+    (tmp_path / "gardner_official_fold1.pt").touch()
+    body = (await client.get(f"{ML}/status")).json()["blastocyst"]
+    assert body["mode"] == "official"
+    assert body["files"] == ["gardner_official_fold1.pt"]
+
+
 async def test_disabled_ml_returns_503(client, monkeypatch):
     monkeypatch.setattr(settings, "ML_ENABLED", False)
     r = await client.post(f"{ML}/blastocyst/predict", files={"image": ("e.png", b"x", "image/png")})

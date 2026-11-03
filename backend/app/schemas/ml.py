@@ -38,7 +38,7 @@ class MLStatusResponse(_Base):
 # Модель 1: бластоциста по фото (Гарднер)
 # ---------------------------------------------------------------------------
 class GardnerProbabilities(_Base):
-    exp: list[float] = Field(description="Вероятности степени экспансии 0..4 (EXP1..EXP5 → индексы)")
+    exp: list[float] = Field(description="Вероятности классов модели EXP0..EXP4; индекс совпадает с номером класса")
     icm: list[float] | None = Field(None, description="Вероятности ВКМ A/B/C (только при экспансии ≥ 2)")
     te: list[float] | None = Field(None, description="Вероятности трофэктодермы A/B/C (только при экспансии ≥ 2)")
 
