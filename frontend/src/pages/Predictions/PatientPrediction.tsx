@@ -169,7 +169,9 @@ export const PatientPrediction = () => {
   const statusQuery = useQuery({
     queryKey: ["ml-status"],
     queryFn: mlApi.status,
-    staleTime: 15000,
+    staleTime: 5000,
+    refetchInterval: 15000,
+    refetchOnWindowFocus: true,
   });
   const status = statusQuery.data;
   const unavailable =

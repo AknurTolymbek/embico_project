@@ -80,3 +80,8 @@ temp/
 # OS
 Thumbs.db
 .claude
+
+# Trained weights stay on the deployment machine, outside source control.
+ml-model/weights/*
+!ml-model/weights/.gitkeep
+!ml-model/weights/README.md

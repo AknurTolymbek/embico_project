@@ -23,8 +23,8 @@ services:
     build:
       context: ./backend
       args:
-        # true — установить torch и др. для ML-эндпоинтов (/api/v1/ml/*)
-        INSTALL_ML: ${INSTALL_ML:-false}
+        # ML нужен обеим моделям. Лёгкую сборку можно явно выбрать INSTALL_ML=false.
+        INSTALL_ML: ${INSTALL_ML:-true}
     container_name: embico_backend
     restart: unless-stopped
     environment:
@@ -47,7 +47,8 @@ services:
     volumes:
       # Монтируем код — изменения подхватываются без пересборки образа
       - ./backend:/app
-      - ./ml-model:/ml-model:ro
+      # Веса хранятся на хосте отдельно от образа и кода приложения.
+      - ${ML_WEIGHTS_DIR:-./ml-model/weights}:/ml-model/weights:ro
     depends_on:
       postgres:
         condition: service_healthy
