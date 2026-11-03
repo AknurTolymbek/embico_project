@@ -1,0 +1,71 @@
+{
+  "data_root": "/kaggle/input",
+  "work": "/tmp/gomez",
+  "out_dir": "/kaggle/working",
+  "zenodo": "https://zenodo.org/records/7885222/files/",
+  "focal": [
+    "F-15",
+    "F0",
+    "F15"
+  ],
+  "backbone": "convnext_tiny.fb_in22k_ft_in1k",
+  "img_size": 224,
+  "batch_size": 48,
+  "epochs": 10,
+  "lr": 0.0002,
+  "train_every": 2,
+  "test_frac": 0.2,
+  "val_frac": 0.15,
+  "num_workers": 4,
+  "seed": 42,
+  "seq_epochs": 40,
+  "seq_lr": 0.001,
+  "lambdas": [
+    0.0,
+    0.25,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "early_hours": 72,
+  "observe_hours": 110,
+  "n_boot": 1000,
+  "model_version": "timelapse-v0.4",
+  "phases": [
+    "tPB2",
+    "tPNa",
+    "tPNf",
+    "t2",
+    "t3",
+    "t4",
+    "t5",
+    "t6",
+    "t7",
+    "t8",
+    "t9+",
+    "tM",
+    "tSB",
+    "tB",
+    "tEB"
+  ],
+  "key_events": [
+    "t2",
+    "t3",
+    "t4",
+    "t5",
+    "t8",
+    "tSB",
+    "tB"
+  ],
+  "best_model": "ConvNeXt-Tiny + HMM",
+  "lambda": {
+    "ConvNeXt": 0.0,
+    "ConvNeXt+BiGRU": 0.25
+  },
+  "blast_model": "LogReg",
+  "split_counts": {
+    "train": 451,
+    "test": 141,
+    "val": 112
+  }
+}
