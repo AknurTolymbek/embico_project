@@ -1,236 +1,118 @@
 # EMBICO Platform
 
-Платформа для клиники ЭКО (репродуктивная медицина).
+Рабочее пространство репродуктивной клиники: пациенты, медицинские карты и ML-анализ эмбрионов.
 
-## Docker и ML-модели
+## Запуск через Docker
 
-На компьютере, где запускается Docker, разместите веса обеих моделей в `ml-model/weights` и выполните из корня проекта:
+На компьютере, где будет работать приложение:
+
+1. Создайте **корневой** `.env` по `.env.example`, сохранив существующие параметры БД, если файл уже есть.
+2. Задайте постоянный случайный `SECRET_KEY` и данные первого администратора:
+
+   ```dotenv
+   SECRET_KEY=<постоянный случайный секрет, не менее 32 символов>
+   FIRST_SUPERUSER_LOGIN=admin
+   FIRST_SUPERUSER_PASSWORD=<свой пароль от 8 символов>
+   FIRST_SUPERUSER_FIRST_NAME=Имя
+   FIRST_SUPERUSER_LAST_NAME=Фамилия
+   INSTALL_ML=true
+   ML_ENABLED=true
+   ML_WEIGHTS_DIR=./ml-model/weights
+   ```
+
+3. Запустите:
+
+   ```bash
+   docker-compose up -d --build
+   ```
+
+Откройте `http://localhost:5173`. При старте backend автоматически применяет миграции и создаёт первого администратора **только из заданных настроек**. Пароли в лог не выводятся; фиксированного пароля администратора больше нет. Если администратор уже существует, повторный запуск его пароль не меняет.
+
+После переноса кода на другой компьютер нужно перенести и настройки, и файлы весов. Изменения здесь не обновляют другой компьютер автоматически.
+
+## Авторизация
+
+Гостевой доступ удалён. Без входа доступны формы входа и регистрации; данные пациентов и ML API требуют access JWT.
+
+- Пользователь: `username`, `first_name`, `last_name`, пароль, необязательный email, роль `admin` или `doctor`.
+- Самостоятельная регистрация создаёт только `doctor`. Создавать других администраторов может администратор через `/api/v1/users/`.
+- Access JWT действует **1 день**, хранится только в памяти фронтенда.
+- Refresh JWT находится в **HttpOnly, SameSite=Lax cookie**. Каждый успешный refresh заменяет токен и продлевает срок на **30 дней от этого обновления**. Старый refresh больше не действует. Отдельного предельного срока активной сессии нет.
+- При перезагрузке страницы фронтенд восстанавливает сессию через refresh. При 401 автоматически обновляет токены и повторяет запрос один раз; параллельные запросы используют одно обновление.
+- Выход отзывает сессию в БД и очищает cookie. Отключённый пользователь и отозванная сессия не могут пользоваться даже ещё не истёкшим access JWT.
+- Для HTTPS production задайте `AUTH_COOKIE_SECURE=true`. Сохраняйте `SECRET_KEY` между перезапусками; frontend и API должны быть на одном сайте.
+
+### Endpoints
+
+| Метод | URL | Доступ |
+|---|---|---|
+| POST | `/api/v1/auth/register` | Регистрация врача |
+| POST | `/api/v1/auth/login` | Вход по логину или прежнему email |
+| POST | `/api/v1/auth/refresh` | Refresh-cookie |
+| POST | `/api/v1/auth/logout` | Выход текущей сессии |
+| GET | `/api/v1/auth/me` | Текущий пользователь |
+| GET/PATCH | `/api/v1/users/me` | Свой профиль |
+| GET/POST | `/api/v1/users/` | Только admin |
+| PATCH | `/api/v1/users/{id}` | Только admin: роль/активность |
+
+Тела login/register — JSON. Все POST `/auth/*` требуют `X-CSRF-Protection: 1`; фронтенд добавляет его автоматически. API-клиентам нужно сохранять cookie при login/register и передавать её при refresh/logout. Для клинических запросов используется `Authorization: Bearer <access_token>`.
+
+```json
+{
+  "username": "doctor.aliya",
+  "password": "<ваш пароль>",
+  "first_name": "Алия",
+  "last_name": "Серикова"
+}
+```
+
+Миграция `002` сохраняет пользователей, пациентов и циклы. Старые клинические роли преобразуются в `doctor`, логины — в `user_<id>`; вход по прежнему email и паролю остаётся доступен. Учётная запись не получает `admin` автоматически только из-за своего email.
+
+## ML-модели
+
+Разместите веса в `ml-model/weights` на машине запуска. Список файлов — в `ml-model/weights/README.md`.
 
 ```bash
 bash scripts/start-ml.sh
 ```
 
-Скрипт сохраняет `INSTALL_ML=true` и `ML_ENABLED=true` в корневом `.env`, сохраняя остальные настройки, собирает и запускает backend/frontend и проверяет обе модели через `/api/v1/ml/status`. Веса монтируются отдельно от кода и Docker-образа. Другую папку можно выбрать через `ML_WEIGHTS_DIR` в корневом `.env`. Образ backend также включает ML-зависимости по умолчанию, чтобы обычная пересборка не возвращала лёгкий образ без PyTorch.
+Скрипт сохраняет `INSTALL_ML=true` и `ML_ENABLED=true` в корневом `.env`, собирает и запускает backend/frontend и проверяет обе модели **внутри контейнера**. `/api/v1/ml/status` теперь тоже требует авторизации, публичного обхода нет. Веса отдельно монтируются в `/ml-model/weights` и не входят в образ или Git. `loaded: false` до первого расчёта нормален; после настройки выполните пробный анализ обоих типов.
 
-Список файлов находится в `ml-model/weights/README.md`. Статус `loaded: false` до первого расчёта нормален: загрузка моделей ленивая. Найденные зависимости и веса ещё не подтверждают совместимость checkpoint — после настройки выполните пробный расчёт каждого типа. Изменения на одном компьютере не применяются автоматически к другому: переносите код, а веса храните на машине запуска.
+## Архитектура
 
-## 🚀 Быстрый старт
+```text
+backend/app/
+  modules/
+    auth/       JWT, refresh-сессии, зависимости, login/register/refresh/logout
+    users/      Пользователи, профили и роли
+    patients/   Модель, схемы, сервис и API пациентов
+    ml/         API/схемы ML и inference/
+  api/v1/       Подключение модулей и защита клинических API
+  core/         Конфигурация, JWT/хеширование, общие enum
+  db/           Подключение БД и общие mixin
+  models/       Регистрация metadata, будущая модель циклов, совместимые импорты
+```
 
-### 1. Установка зависимостей
+Подробности — `backend/ARCHITECTURE.md`. Старые пути импортов оставлены как ссылки на новые модули, без копий реализаций.
+
+## Проверки
+
+Frontend:
 
 ```bash
-# Активируйте виртуальное окружение (если ещё не активировано)
-source .venv/bin/activate  # Linux/macOS
-# или
-.venv\Scripts\activate  # Windows
-
-# Установите зависимости Python
-cd backend
-pip install -r requirements.txt
+cd frontend
+npm ci
+npm run build
+npm run lint
+npm run test:auth
 ```
 
-### 2. Настройка переменных окружения
-
-Файл `.env` уже создан на основе `.env.example`. Проверьте его:
+Backend (из `/app` контейнера):
 
 ```bash
-cat backend/.env
+python -m pytest -q
 ```
 
-**Важно:** Замените `SECRET_KEY` на случайную строку (минимум 32 символа) для production!
+Интеграционные auth-тесты запускаются только при явном `TEST_DATABASE_URL`, указывающем на отдельную мигрированную PostgreSQL-базу с `test` в имени. Каждый обычный тест откатывает транзакцию; тест конкурирующих refresh удаляет собственную запись. Не используйте рабочую базу для этого параметра.
 
-### 3. Запуск базы данных (PostgreSQL)
-
-```bash
-# Из корневой директории проекта
-docker-compose up -d
-```
-
-Это запустит:
-- **PostgreSQL** на порту `5432`
-- **pgAdmin** на порту `5050` (http://localhost:5050)
-
-Данные для входа в pgAdmin:
-- Email: `admin@embico.kz`
-- Пароль: `admin123`
-
-### 4. Применение миграций
-
-```bash
-cd backend
-
-# Применить миграции к БД
-alembic upgrade head
-```
-
-### 5. Генерация синтетических данных
-
-```bash
-# Заполнить БД тестовыми данными
-python -m scripts.seed_data
-```
-
-Это создаст:
-- 5 пользователей (врачи и эмбриологи)
-- 20 пациенток
-- ~40 циклов ЭКО
-
-**Тестовые учётные записи:**
-- Email: `user1@embico.kz` ... `user5@embico.kz`
-- Пароль: `password123`
-
-### 6. Запуск сервера
-
-```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-## 📚 API Документация
-
-После запуска сервера документация доступна по адресам:
-
-- **Swagger UI:** http://localhost:8000/api/v1/docs
-- **ReDoc:** http://localhost:8000/api/v1/redoc
-- **Health check:** http://localhost:8000/health
-
-## 🗂 Структура проекта
-
-```
-embico-platform/
-├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── v1/
-│   │   │   │   └── api.py           # Главный роутер API
-│   │   │   └── endpoints/
-│   │   │       └── patients.py      # CRUD endpoints для пациенток
-│   │   ├── core/
-│   │   │   ├── config.py            # Настройки приложения
-│   │   │   └── security.py          # JWT, хеширование
-│   │   ├── crud/
-│   │   │   └── patient.py           # CRUD функции
-│   │   ├── db/
-│   │   │   └── database.py          # Подключение к БД
-│   │   ├── models/
-│   │   │   ├── base.py              # Миксины (timestamps, soft delete)
-│   │   │   ├── enums.py             # Enum типы
-│   │   │   ├── user.py              # Модель User
-│   │   │   ├── patient.py           # Модель Patient
-│   │   │   └── cycle.py             # Модель Cycle
-│   │   ├── schemas/
-│   │   │   └── patient.py           # Pydantic схемы
-│   │   └── main.py                  # FastAPI приложение
-│   ├── alembic/                     # Миграции БД
-│   ├── scripts/
-│   │   └── seed_data.py             # Генерация синтетических данных
-│   ├── tests/                       # Тесты
-│   ├── .env                         # Переменные окружения
-│   ├── .env.example                 # Пример настроек
-│   ├── alembic.ini                  # Конфигурация Alembic
-│   └── requirements.txt             # Зависимости Python
-├── docker-compose.yml               # PostgreSQL + pgAdmin
-├── CLAUDE.md                        # Контекст проекта
-└── README.md                        # Эта инструкция
-```
-
-## 🔧 Полезные команды
-
-### Работа с миграциями
-
-```bash
-# Создать новую миграцию (автогенерация)
-alembic revision --autogenerate -m "описание изменений"
-
-# Применить все миграции
-alembic upgrade head
-
-# Откатить последнюю миграцию
-alembic downgrade -1
-
-# Посмотреть текущую версию БД
-alembic current
-
-# Посмотреть историю миграций
-alembic history
-```
-
-### Работа с Docker
-
-```bash
-# Запустить контейнеры
-docker-compose up -d
-
-# Остановить контейнеры
-docker-compose down
-
-# Посмотреть логи
-docker-compose logs -f postgres
-
-# Полная очистка (удалить контейнеры и volumes)
-docker-compose down -v
-```
-
-### Тестирование API
-
-```bash
-# Получить список пациенток
-curl http://localhost:8000/api/v1/patients/
-
-# Создать новую пациентку
-curl -X POST http://localhost:8000/api/v1/patients/ \
-  -H "Content-Type: application/json" \
-  -d '{
-    "medical_record_number": "MRN99999",
-    "date_of_birth": "1990-01-15",
-    "blood_type": "A+",
-    "height": 165,
-    "weight": 60,
-    "amh_level": 3.5
-  }'
-```
-
-## 📊 Реализованные модули
-
-### ✅ Базовая инфраструктура
-- FastAPI приложение
-- PostgreSQL в Docker
-- SQLAlchemy 2.0 (async)
-- Alembic миграции
-- Pydantic валидация
-- CORS настройки
-
-### ✅ Модели данных
-- **User** — пользователи (репродуктолог, эмбриолог)
-- **Patient** — пациентки (обезличенные данные)
-- **Cycle** — циклы ЭКО
-
-### ✅ API Endpoints
-- `GET /api/v1/patients/` — список пациенток
-- `GET /api/v1/patients/{id}` — получить пациентку
-- `POST /api/v1/patients/` — создать пациентку
-- `PUT /api/v1/patients/{id}` — обновить данные
-- `DELETE /api/v1/patients/{id}` — удалить (soft delete)
-
-## 🔜 Следующие шаги
-
-1. Добавить JWT авторизацию
-2. Реализовать модули:
-   - Ооциты
-   - Спермограмма
-   - Стимуляция
-   - Time-lapse
-   - Переносы и исходы
-3. Добавить тесты (pytest)
-4. Создать frontend (React + TypeScript)
-
-## 📝 Технологии
-
-- **Backend:** FastAPI, SQLAlchemy 2.0, PostgreSQL, Alembic
-- **Validation:** Pydantic
-- **Security:** JWT, bcrypt
-- **Dev tools:** Faker, Ruff, pytest
-- **Infrastructure:** Docker, docker-compose
-
----
-
-**Контекст проекта:** См. [CLAUDE.md](CLAUDE.md)
+Swagger: `http://localhost:8000/api/v1/docs`. Healthcheck: `http://localhost:8000/health`.

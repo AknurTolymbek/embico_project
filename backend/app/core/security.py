@@ -1,64 +1,47 @@
-"""
-Функции безопасности для EMBICO Platform.
-Хеширование паролей, создание и проверка JWT токенов.
-"""
+"""Password hashing and typed JWT primitives shared by authentication services."""
 from datetime import datetime, timedelta, timezone
-from typing import Any
+from uuid import uuid4, UUID
 
-from jose import jwt
-from passlib.context import CryptContext
+import bcrypt
+from jose import jwt, JWTError
 
 from app.core.config import settings
 
-# Контекст для хеширования паролей
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def create_access_token(subject: str | Any, expires_delta: timedelta | None = None) -> str:
-    """
-    Создаёт JWT access token.
-
-    Args:
-        subject: Идентификатор пользователя (обычно user_id или email)
-        expires_delta: Время жизни токена (если None, берётся из настроек)
-
-    Returns:
-        JWT токен в виде строки
-    """
-    if expires_delta:
-        expire = datetime.now(timezone.utc) + expires_delta
-    else:
-        expire = datetime.now(timezone.utc) + timedelta(
-            minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
-        )
-
-    to_encode = {"exp": expire, "sub": str(subject)}
-    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
-    return encoded_jwt
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """
-    Проверяет соответствие пароля хешу.
-
-    Args:
-        plain_password: Пароль в открытом виде
-        hashed_password: Хешированный пароль
-
-    Returns:
-        True если пароль совпадает, False иначе
-    """
-    return pwd_context.verify(plain_password, hashed_password)
-
 
 def get_password_hash(password: str) -> str:
-    """
-    Хеширует пароль.
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('ascii')
 
-    Args:
-        password: Пароль в открытом виде
 
-    Returns:
-        Хешированный пароль
-    """
-    return pwd_context.hash(password)
+def verify_password(password: str, hashed_password: str) -> bool:
+    try:
+        return bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('ascii'))
+    except (ValueError, TypeError, UnicodeError):
+        return False
+
+
+def create_token(user_id: int, session_id: str, kind: str, lifetime: timedelta) -> str:
+    now = datetime.now(timezone.utc)
+    return jwt.encode({
+        'sub': str(user_id), 'sid': session_id, 'type': kind,
+        'jti': uuid4().hex, 'iat': now, 'exp': now + lifetime,
+        'iss': settings.JWT_ISSUER,
+    }, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+
+def decode_token(token: str, kind: str) -> dict:
+    payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM],
+                         issuer=settings.JWT_ISSUER,
+                         options={'require_exp': True, 'require_iat': True, 'require_sub': True})
+    if payload.get('type') != kind or not payload.get('sid') or not payload.get('jti'):
+        raise JWTError('Invalid token type or session')
+    try:
+        UUID(payload['sid'])
+        if int(payload['sub']) <= 0:
+            raise ValueError()
+    except (ValueError, TypeError, AttributeError) as exc:
+        raise JWTError('Invalid subject') from exc
+    return payload
+
+
+def create_access_token(subject: int, session_id: str, expires_delta: timedelta | None = None) -> str:
+    return create_token(subject, session_id, 'access', expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES))

@@ -1,26 +1,29 @@
-// User and Auth types
+// Auth and user roles are enforced by the backend.
+export const UserRole = { ADMIN: "admin", DOCTOR: "doctor" } as const;
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 export interface User {
   id: number;
-  email: string;
+  username: string;
+  first_name: string;
+  last_name: string;
   full_name: string;
+  email: string | null;
   role: UserRole;
   is_active: boolean;
 }
-
-export const UserRole = {
-  REPRODUCTOLOGIST: "reproductologist",
-  EMBRYOLOGIST: "embryologist",
-} as const;
-export type UserRole = (typeof UserRole)[keyof typeof UserRole];
-
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
-
+export interface RegisterRequest extends LoginRequest {
+  first_name: string;
+  last_name: string;
+}
 export interface TokenResponse {
   access_token: string;
   token_type: string;
+  expires_in: number;
+  user: User;
 }
 
 // Patient fields match backend/app/schemas/patient.py.

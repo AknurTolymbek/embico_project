@@ -1,23 +1,29 @@
-import { apiClient } from './client';
-import type { LoginRequest, TokenResponse, User } from '../types';
+import { apiClient, authClient, withAuthLock } from "./client";
+import type {
+  LoginRequest,
+  RegisterRequest,
+  TokenResponse,
+  User,
+} from "../types";
 
 export const authApi = {
-  login: async (credentials: LoginRequest): Promise<TokenResponse> => {
-    // FastAPI OAuth2PasswordRequestForm expects form data
-    const formData = new URLSearchParams();
-    formData.append('username', credentials.email);
-    formData.append('password', credentials.password);
-
-    const response = await apiClient.post<TokenResponse>('/api/auth/login', formData, {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+  login: async (values: LoginRequest): Promise<TokenResponse> =>
+    withAuthLock(
+      async () =>
+        (await authClient.post<TokenResponse>("/api/v1/auth/login", values))
+          .data,
+    ),
+  register: async (values: RegisterRequest): Promise<TokenResponse> =>
+    withAuthLock(
+      async () =>
+        (await authClient.post<TokenResponse>("/api/v1/auth/register", values))
+          .data,
+    ),
+  logout: async (): Promise<void> => {
+    await withAuthLock(async () => {
+      await authClient.post("/api/v1/auth/logout");
     });
-    return response.data;
   },
-
-  getCurrentUser: async (): Promise<User> => {
-    const response = await apiClient.get<User>('/api/auth/me');
-    return response.data;
-  },
+  getCurrentUser: async (): Promise<User> =>
+    (await apiClient.get<User>("/api/v1/users/me")).data,
 };

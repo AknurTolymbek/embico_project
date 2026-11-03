@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
+from app import models  # noqa: F401 — register domain models before ORM queries
 
 # Создаём FastAPI приложение
 app = FastAPI(

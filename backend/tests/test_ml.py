@@ -15,6 +15,7 @@ from httpx import ASGITransport, AsyncClient
 from app.api.endpoints.ml import parse_hours
 from app.core.config import settings
 from app.main import app
+from app.modules.auth.dependencies import get_current_user
 from app.ml import constants as C
 from app.ml import registry
 from app.ml import timelapse as tl
@@ -36,8 +37,12 @@ def _isolated_registry(monkeypatch, tmp_path):
 
 @pytest.fixture
 async def client():
-    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
-        yield c
+    app.dependency_overrides[get_current_user] = lambda: object()
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+            yield c
+    finally:
+        app.dependency_overrides.pop(get_current_user, None)
 
 
 def png_bytes(size=(64, 64)) -> bytes:

@@ -33,15 +33,13 @@ async def test_patient_creation_preflight(client, origin):
     assert "POST" in response.headers["access-control-allow-methods"]
 
 
-async def test_patient_validation_response_is_readable_in_browser(client):
+async def test_unauthenticated_response_is_readable_in_browser(client):
     response = await client.post("/api/v1/patients/", json={}, headers={
         "Origin": "http://localhost:5173",
     })
-    assert response.status_code == 422
+    assert response.status_code == 401
     assert response.headers["access-control-allow-origin"] == "http://localhost:5173"
-    assert {error["loc"][-1] for error in response.json()["detail"]} >= {
-        "medical_record_number", "date_of_birth",
-    }
+    assert response.headers["www-authenticate"] == "Bearer"
 
 
 async def test_unlisted_origin_is_rejected(client):

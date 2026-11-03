@@ -27,17 +27,21 @@ async def create_users(db: AsyncSession, count: int = 5) -> list[User]:
     print(f"Создание {count} пользователей...")
 
     users = []
-    roles = [UserRole.REPRODUCTOLOGIST, UserRole.EMBRYOLOGIST]
+    roles = [UserRole.DOCTOR, UserRole.DOCTOR]
 
     for i in range(count):
         role = random.choice(roles)
-        role_ru = "репродуктолог" if role == UserRole.REPRODUCTOLOGIST else "эмбриолог"
+        role_ru = "репродуктолог" if role == UserRole.DOCTOR else "эмбриолог"
 
+        first_name, last_name = fake.first_name(), fake.last_name()
         user = User(
+            username=f'user{i+1}',
+            first_name=first_name,
+            last_name=last_name,
             email=f"user{i+1}@embico.kz",
             hashed_password=get_password_hash("password123"),
             role=role,
-            full_name=f"{fake.last_name()} {fake.first_name()} {fake.middle_name()}",
+            full_name=f"{first_name} {last_name}",
             is_active=True,
         )
         db.add(user)
@@ -87,8 +91,8 @@ async def create_cycles(
     """Создаём циклы ЭКО для пациенток"""
     print("Создание циклов ЭКО...")
 
-    doctors = [u for u in users if u.role == UserRole.REPRODUCTOLOGIST]
-    embryologists = [u for u in users if u.role == UserRole.EMBRYOLOGIST]
+    doctors = [u for u in users if u.role == UserRole.DOCTOR]
+    embryologists = [u for u in users if u.role == UserRole.DOCTOR]
 
     if not doctors:
         doctors = users  # Если нет репродуктологов, берём любых

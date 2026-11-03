@@ -18,6 +18,8 @@ import { SettingsPage } from "./pages/Settings/SettingsPage";
 
 import { PatientPrediction } from "./pages/Predictions/PatientPrediction";
 
+import { Login } from "./pages/Login";
+
 import "./i18n";
 
 const queryClient = new QueryClient({
@@ -53,10 +55,7 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
-              <Route
-                path="/login"
-                element={<Navigate to="/patients" replace />}
-              />
+              <Route path="/login" element={<Login />} />
               <Route
                 path="/"
                 element={

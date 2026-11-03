@@ -31,24 +31,30 @@ PY
 
 INSTALL_ML=true ML_ENABLED=true "${compose[@]}" up -d --build backend frontend
 
-python3 - <<'PY'
+python3 - "${compose[@]}" <<'PY'
 import json
+import subprocess
 import sys
 import time
 from urllib.error import URLError
 from urllib.request import urlopen
 
-url = 'http://localhost:8000/api/v1/ml/status'
+url = 'http://localhost:8000/health'
 for attempt in range(30):
     try:
         with urlopen(url, timeout=5) as response:
-            status = json.load(response)
+            json.load(response)
         break
     except (URLError, OSError, ValueError):
         if attempt == 29:
             sys.exit('Backend не ответил. Проверьте: docker-compose logs --tail=100 backend')
         time.sleep(1)
 
+# /ml/status is now private. Inspect readiness inside the container without
+# creating a public bypass or storing administrator tokens in a shell script.
+command = sys.argv[1:] + ['exec', '-T', 'backend', 'python', '-c',
+    'import json; from app.modules.ml.inference.registry import status; print(json.dumps(status()))']
+status = json.loads(subprocess.check_output(command, text=True))
 print('Папка весов внутри контейнера:', status['models_dir'])
 missing = status['missing_dependencies']
 if missing:

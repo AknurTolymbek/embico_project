@@ -43,7 +43,11 @@ class Settings(BaseSettings):
     # Security
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
+    JWT_ISSUER: str = "embico"
+    AUTH_COOKIE_NAME: str = "embico_refresh"
+    AUTH_COOKIE_SECURE: bool = False
 
     # CORS
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] | str = []
@@ -60,8 +64,15 @@ class Settings(BaseSettings):
 
     # First superuser (для инициализации)
     FIRST_SUPERUSER_EMAIL: EmailStr | None = None
+    @field_validator("FIRST_SUPERUSER_EMAIL", mode="before")
+    @classmethod
+    def empty_admin_email(cls, value):
+        return value or None
+
     FIRST_SUPERUSER_PASSWORD: str | None = None
-    FIRST_SUPERUSER_ROLE: str = "reproductologist"
+    FIRST_SUPERUSER_LOGIN: str = "admin"
+    FIRST_SUPERUSER_FIRST_NAME: str = "Администратор"
+    FIRST_SUPERUSER_LAST_NAME: str = "Клиники"
 
     # ML-модели (оценка бластоцисты по фото и time-lapse морфокинетика)
     ML_ENABLED: bool = True

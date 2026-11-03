@@ -1,4 +1,4 @@
-import { Avatar, Dropdown, Button } from "antd";
+import { Avatar, Dropdown, Button, message } from "antd";
 import {
   DownOutlined,
   UserOutlined,
@@ -28,7 +28,15 @@ export const Header = () => {
                 key: "logout",
                 label: "Выйти",
                 icon: <LogoutOutlined />,
-                onClick: logout,
+                onClick: async () => {
+                  try {
+                    await logout();
+                  } catch {
+                    message.error(
+                      "Не удалось выйти. Проверьте соединение и попробуйте ещё раз.",
+                    );
+                  }
+                },
               },
             ],
           }}
@@ -37,10 +45,8 @@ export const Header = () => {
           <Button type="text" className="profile-button">
             <Avatar size={34} icon={<UserOutlined />} />
             <span>
-              <strong>{user?.full_name || "Гость"}</strong>
-              <small>
-                {user?.id === 0 ? "Гостевой доступ" : "Специалист клиники"}
-              </small>
+              <strong>{user?.full_name || user?.username}</strong>
+              <small>{user?.role === "admin" ? "Администратор" : "Врач"}</small>
             </span>
             <DownOutlined />
           </Button>

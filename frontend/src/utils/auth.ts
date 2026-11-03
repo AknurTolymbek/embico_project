@@ -1,32 +1,28 @@
-import type { User } from '../types';
+import type { User } from "../types";
 
-export const setToken = (token: string): void => {
-  localStorage.setItem('access_token', token);
+let accessToken: string | null = null;
+let currentUser: User | null = null;
+const listeners = new Set<() => void>();
+
+// Remove credentials left by the former demo implementation.
+localStorage.removeItem("access_token");
+localStorage.removeItem("user");
+
+export const getToken = () => accessToken;
+export const getUser = () => currentUser;
+export const setSession = (token: string, user: User) => {
+  accessToken = token;
+  currentUser = user;
+  listeners.forEach((listener) => listener());
 };
-
-export const getToken = (): string | null => {
-  return localStorage.getItem('access_token');
+export const removeToken = () => {
+  accessToken = null;
+  currentUser = null;
+  listeners.forEach((listener) => listener());
 };
-
-export const removeToken = (): void => {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('user');
-};
-
-export const setUser = (user: User): void => {
-  localStorage.setItem('user', JSON.stringify(user));
-};
-
-export const getUser = (): User | null => {
-  const userStr = localStorage.getItem('user');
-  if (!userStr) return null;
-  try {
-    return JSON.parse(userStr);
-  } catch {
-    return null;
-  }
-};
-
-export const isAuthenticated = (): boolean => {
-  return !!getToken();
+export const subscribeAuth = (listener: () => void) => {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
 };

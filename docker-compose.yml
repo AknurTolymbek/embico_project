@@ -36,7 +36,15 @@ services:
       POSTGRES_PORT: 5432
       DATABASE_URL: postgresql://${POSTGRES_USER:-embico_user}:${POSTGRES_PASSWORD:-embico_password}@postgres:5432/${POSTGRES_DB:-embico_db}
       SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production-min-32-chars}
-      DEBUG: "True"
+      DEBUG: "False"
+      ACCESS_TOKEN_EXPIRE_MINUTES: 1440
+      REFRESH_TOKEN_EXPIRE_DAYS: 30
+      AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+      FIRST_SUPERUSER_LOGIN: ${FIRST_SUPERUSER_LOGIN:-admin}
+      FIRST_SUPERUSER_PASSWORD: ${FIRST_SUPERUSER_PASSWORD:-}
+      FIRST_SUPERUSER_EMAIL: ${FIRST_SUPERUSER_EMAIL:-}
+      FIRST_SUPERUSER_FIRST_NAME: ${FIRST_SUPERUSER_FIRST_NAME:-Администратор}
+      FIRST_SUPERUSER_LAST_NAME: ${FIRST_SUPERUSER_LAST_NAME:-Клиники}
       BACKEND_CORS_ORIGINS: '["http://localhost:5173","http://127.0.0.1:5173","http://localhost:3000","http://127.0.0.1:3000"]'
       # ML: веса моделей лежат в ./ml-model/weights (монтируются только на чтение)
       ML_ENABLED: ${ML_ENABLED:-true}
