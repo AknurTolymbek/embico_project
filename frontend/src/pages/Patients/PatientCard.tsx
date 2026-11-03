@@ -219,13 +219,13 @@ export const PatientCard = () => {
             {isComplete(patient) ? "Карта заполнена" : "Карта заполняется"}
           </span>
           <div className="patient-prediction-actions">
-            <Button
-              type="primary"
-              icon={<ExperimentOutlined />}
-              href={`/patients/${id}/predict`}
-            >
-              Предикт
-            </Button>
+              <Button
+                  type="primary"
+                  icon={<ExperimentOutlined />}
+                  href={`/patients/${id}/predict`}
+              >
+                  Анализ эмбрионов
+              </Button>
             <Button icon={<EditOutlined />} onClick={() => setEditorOpen(true)}>
               Редактировать карту
             </Button>

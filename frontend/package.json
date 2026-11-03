@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test:auth": "node scripts/test-auth.mjs"
+    "test:auth": "node scripts/test-auth.mjs",
+    "test:time": "node scripts/test-time-elapsed.mjs"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.4",

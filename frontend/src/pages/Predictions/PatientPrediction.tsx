@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Alert, Button, Empty, Input, Skeleton, Tabs } from "antd";
+import { Alert, Button, Empty, Input, Skeleton, Tabs, Upload } from "antd";
 import {
   ArrowDownOutlined,
   ArrowLeftOutlined,
@@ -18,6 +18,10 @@ import { patientsApi } from "../../api/patients";
 import { mlApi } from "../../api/ml";
 import type { PredictionResult as Result } from "../../types/ml";
 import { PredictionResult } from "./PredictionResult";
+import {
+  parseTimeElapsed,
+  TimeElapsedError,
+} from "../../utils/parseTimeElapsed";
 import "./predictions.css";
 
 type Mode = "blastocyst" | "timelapse";
@@ -158,6 +162,10 @@ export const PatientPrediction = () => {
   const [framesFm, setFramesFm] = useState<File[]>([]);
   const [framesFp, setFramesFp] = useState<File[]>([]);
   const [hoursText, setHoursText] = useState("");
+  const [timeFileNote, setTimeFileNote] = useState<{
+    type: "success" | "warning" | "error";
+    message: string;
+  } | null>(null);
   const [validationError, setValidationError] = useState("");
   const controller = useRef<AbortController | null>(null);
   useEffect(() => () => controller.current?.abort(), []);
@@ -202,6 +210,57 @@ export const PatientPrediction = () => {
   const changed = () => {
     setValidationError("");
     mutation.reset();
+  };
+  const loadTimeFile = async (file: File) => {
+    changed();
+    let text: string;
+    try {
+      text = await file.text();
+    } catch {
+      setTimeFileNote({ type: "error", message: "Не удалось прочитать файл" });
+      return;
+    }
+    try {
+      const result = parseTimeElapsed(
+        text,
+        frames.map((frame) => frame.name),
+      );
+      setHoursText(result.hours.join(", "));
+      if (result.droppedFrames) {
+        const keep = (list: File[]) =>
+          list.length === frames.length
+            ? result.keepIndices.map((index) => list[index])
+            : list;
+        setFrames(keep(frames));
+        setFramesFm(keep(framesFm));
+        setFramesFp(keep(framesFp));
+      }
+      const dropped = [
+        result.droppedFrames &&
+          `удалено кадров без времени: ${result.droppedFrames}`,
+        result.droppedTimes &&
+          `отброшено значений времени без кадра: ${result.droppedTimes}`,
+      ].filter(Boolean);
+      setTimeFileNote(
+        dropped.length
+          ? {
+              type: "warning",
+              message: `Файл ${file.name}: загружено значений ${result.hours.length}; ${dropped.join("; ")}.`,
+            }
+          : {
+              type: "success",
+              message: `Файл ${file.name}: загружено значений ${result.hours.length}.`,
+            },
+      );
+    } catch (error) {
+      setTimeFileNote({
+        type: "error",
+        message:
+          error instanceof TimeElapsedError
+            ? error.message
+            : "Не удалось прочитать файл",
+      });
+    }
   };
   const submit = () => {
     let hours: number[] = [];
@@ -440,6 +499,30 @@ export const PatientPrediction = () => {
                     необходимости измените порядок стрелками. Новый выбор файлов
                     заменяет текущий набор.
                   </p>
+                  <Upload
+                    accept=".csv"
+                    showUploadList={false}
+                    disabled={pending}
+                    beforeUpload={(file) => {
+                      loadTimeFile(file);
+                      return false;
+                    }}
+                  >
+                    <Button icon={<UploadOutlined />} disabled={pending}>
+                      Загрузить файл времени (CSV)
+                    </Button>
+                  </Upload>
+                  <p className="prediction-hint">
+                    Файл &lt;имя&gt;_timeElapsed.csv из датасета. Можно также
+                    ввести время вручную.
+                  </p>
+                  {timeFileNote && (
+                    <Alert
+                      type={timeFileNote.type}
+                      showIcon
+                      title={timeFileNote.message}
+                    />
+                  )}
                   <label
                     className="prediction-field-label"
                     htmlFor="frame-hours"
