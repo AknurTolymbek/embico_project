@@ -74,8 +74,8 @@ export const Login = () => {
             <i />
           </span>
           <span>
-            embico<span className="brand-dot">.</span>
-            <small>FERTILITY CARE PLATFORM</small>
+            embico
+            <small>ПЛАТФОРМА ДЛЯ ЭКО-КЛИНИК</small>
           </span>
         </div>
         <div className="auth-story-content">
@@ -83,7 +83,7 @@ export const Login = () => {
           <h1>
             Каждая история
             <br />
-            начинается с заботы<span>.</span>
+              начинается с заботы
           </h1>
           <p>
             Пациенты, медицинские данные и анализ эмбрионов — в одном рабочем

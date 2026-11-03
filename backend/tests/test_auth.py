@@ -281,3 +281,20 @@ async def test_tampered_access_token_is_rejected(client):
     claims = jwt.get_unverified_claims(token)
     tampered = jwt.encode(claims, 'incorrect-signing-key', algorithm=settings.ALGORITHM)
     assert (await client.get('/api/v1/users/me', headers={'Authorization': f'Bearer {tampered}'})).status_code == 401
+
+
+async def test_seed_admin_updates_password_when_env_changes(client, db, monkeypatch):
+    from scripts.seed_admin import seed_admin
+    login = 'admin_' + uuid4().hex[:12]
+    monkeypatch.setattr(settings, 'FIRST_SUPERUSER_LOGIN', login)
+    monkeypatch.setattr(settings, 'FIRST_SUPERUSER_EMAIL', None)
+    monkeypatch.setattr(settings, 'FIRST_SUPERUSER_PASSWORD', 'OldAdminPass123!')
+    await seed_admin(db)
+    monkeypatch.setattr(settings, 'FIRST_SUPERUSER_PASSWORD', 'NewAdminPass456!')
+    await seed_admin(db)
+    new = await client.post(AUTH + '/login', json={'username': login, 'password': 'NewAdminPass456!'})
+    old = await client.post(AUTH + '/login', json={'username': login, 'password': 'OldAdminPass123!'})
+    assert new.status_code == 200, new.text
+    assert old.status_code == 401
+    admin = (await db.execute(select(User).where(User.username == login))).scalar_one()
+    assert admin.role == UserRole.ADMIN and admin.is_active

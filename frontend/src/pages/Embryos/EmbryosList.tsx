@@ -10,7 +10,7 @@ export const EmbryosList = () => {
     <div>
       <Title level={2}>{t('menu.embryos')}</Title>
       <Card>
-        <Empty description="Раздел в разработке. Здесь будет реестр эмбрионов с time-lapse." />
+          <Empty description="Раздел в разработке. Здесь будет реестр эмбрионов с покадровой съёмкой развития." />
       </Card>
     </div>
   );

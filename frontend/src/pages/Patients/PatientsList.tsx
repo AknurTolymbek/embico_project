@@ -132,9 +132,9 @@ export const PatientsList = () => {
       </div>
       <div className="page-heading">
         <div>
-          <div className="eyebrow">ВАШИ ПАЦИЕНТЫ. ИХ ИСТОРИИ.</div>
-          <h1>
-            Пациенты<span className="heading-dot">.</span>
+            <div className="eyebrow">ВАШИ ПАЦИЕНТЫ И ИХ ИСТОРИИ</div>
+            <h1>
+                Пациенты
           </h1>
           <p>Единое пространство для заботы о каждом пациенте.</p>
         </div>
@@ -199,7 +199,7 @@ export const PatientsList = () => {
             onClick={exportPatients}
             disabled={!filtered.length || isError}
           >
-            Экспорт
+              Скачать список
           </Button>
         </div>
         <div className="registry-tabs" role="group" aria-label="Фильтр карт">

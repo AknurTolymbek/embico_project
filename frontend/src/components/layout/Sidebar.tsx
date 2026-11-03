@@ -17,8 +17,8 @@ export const Sidebar = () => (
         <i />
       </span>
       <span>
-        embico<span className="brand-dot">.</span>
-        <small>FERTILITY CARE PLATFORM</small>
+        embico
+        <small>ПЛАТФОРМА ДЛЯ ЭКО-КЛИНИК</small>
       </span>
     </a>
     <div className="clinic-switch">

@@ -70,9 +70,7 @@ button {
   letter-spacing: -1.6px;
   line-height: 1.1;
 }
-.brand-dot {
-  color: #5084ed;
-}
+
 .brand small {
   display: block;
   letter-spacing: 1.55px;
@@ -366,9 +364,6 @@ h1 {
   line-height: 1.25;
   font-weight: 650;
   color: #243550;
-}
-.heading-dot {
-  color: #6288d9;
 }
 .page-heading p {
   color: #8995a8;

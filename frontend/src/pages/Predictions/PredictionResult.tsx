@@ -74,7 +74,7 @@ export const PredictionResult = ({
   return (
     <section
       className="panel prediction-result"
-      aria-label="Результат предикта"
+      aria-label="Результат анализа"
       aria-live="polite"
     >
       <div className="section-heading">

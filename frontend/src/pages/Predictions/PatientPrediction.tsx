@@ -312,15 +312,13 @@ export const PatientPrediction = () => {
         <span>/</span>
         <Link to={`/patients/${id}`}>{patient.medical_record_number}</Link>
         <span>/</span>
-        <strong>Предикт</strong>
+        <strong>Анализ эмбрионов</strong>
       </div>
       {back}
       <div className="page-heading">
         <div>
-          <div className="eyebrow">ML · АНАЛИЗ ЭМБРИОНОВ</div>
-          <h1>
-            Предикт<span className="heading-dot">.</span>
-          </h1>
+          <div className="eyebrow">ОЦЕНКА ЭМБРИОНОВ С ПОМОЩЬЮ ИИ</div>
+          <h1>Анализ эмбрионов</h1>
           <p>
             Загрузите изображения, заполните параметры и получите ответ модели.
           </p>
@@ -356,7 +354,7 @@ export const PatientPrediction = () => {
                 },
                 {
                   key: "timelapse",
-                  label: "Time-lapse · Кадры",
+                  label: "Покадровая съёмка",
                   disabled: pending,
                 },
               ]}
@@ -384,8 +382,8 @@ export const PatientPrediction = () => {
                     <>
                       <p>
                         {!status?.enabled
-                          ? "ML-модуль отключён на сервере."
-                          : "Для расчёта на сервере должны быть установлены ML-зависимости и загружены веса выбранной модели."}
+                          ? "Модуль ИИ отключён на сервере."
+                          : "Для расчёта на сервере должны быть установлены библиотеки ИИ и загружены веса выбранной модели."}
                       </p>
                       <details>
                         <summary>Чего не хватает</summary>
@@ -516,7 +514,7 @@ export const PatientPrediction = () => {
                   disabled={unavailable || statusQuery.isPending}
                   onClick={submit}
                 >
-                  Запустить предикт
+                  Запустить анализ
                 </Button>
                 {pending && (
                   <Button onClick={() => controller.current?.abort()}>
