@@ -1,0 +1,67 @@
+{
+  "menu": {
+    "today": "Рабочий день",
+    "patients": "Пациенты",
+    "cycles": "Циклы",
+    "lab": "Лаборатория",
+    "embryos": "Эмбрионы",
+    "documents": "Документы",
+    "team": "Команда",
+    "settings": "Настройки"
+  },
+  "auth": {
+    "login": "Вход в систему",
+    "email": "Email",
+    "password": "Пароль",
+    "signIn": "Войти",
+    "logout": "Выйти",
+    "role": "Роль"
+  },
+  "patients": {
+    "title": "Пациенты",
+    "list": "Список пациенток",
+    "search": "Поиск по ФИО или ID",
+    "add": "Добавить пациентку",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "card": "Карточка пациентки",
+    "medicalRecordNumber": "Номер карты",
+    "dateOfBirth": "Дата рождения",
+    "age": "Возраст",
+    "phone": "Телефон",
+    "doctor": "Врач",
+    "activeCycles": "Активные циклы",
+    "diagnosis": "Диагноз"
+  },
+  "cycles": {
+    "title": "Циклы",
+    "list": "Список циклов",
+    "active": "Активные",
+    "completed": "Завершённые",
+    "cancelled": "Отменённые",
+    "startDate": "Дата начала",
+    "status": "Статус",
+    "type": "Тип",
+    "fresh": "Свежий",
+    "cryo": "Крио"
+  },
+  "roles": {
+    "reproductologist": "Репродуктолог",
+    "embryologist": "Эмбриолог"
+  },
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "actions": "Действия",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успешно",
+    "confirm": "Подтвердить",
+    "back": "Назад"
+  }
+}

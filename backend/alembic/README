@@ -1,0 +1,28 @@
+Generic single-database configuration for EMBICO Platform.
+
+## Основные команды Alembic:
+
+Создать новую миграцию (автогенерация):
+```bash
+alembic revision --autogenerate -m "описание изменений"
+```
+
+Применить все миграции:
+```bash
+alembic upgrade head
+```
+
+Откатить последнюю миграцию:
+```bash
+alembic downgrade -1
+```
+
+Посмотреть текущую версию БД:
+```bash
+alembic current
+```
+
+Посмотреть историю миграций:
+```bash
+alembic history
+```

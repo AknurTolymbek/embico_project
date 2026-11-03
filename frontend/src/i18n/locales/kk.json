@@ -1,0 +1,67 @@
+{
+  "menu": {
+    "today": "Жұмыс күні",
+    "patients": "Пациенттер",
+    "cycles": "Циклдар",
+    "lab": "Зертхана",
+    "embryos": "Эмбриондар",
+    "documents": "Құжаттар",
+    "team": "Команда",
+    "settings": "Баптаулар"
+  },
+  "auth": {
+    "login": "Жүйеге кіру",
+    "email": "Email",
+    "password": "Құпия сөз",
+    "signIn": "Кіру",
+    "logout": "Шығу",
+    "role": "Рөл"
+  },
+  "patients": {
+    "title": "Пациенттер",
+    "list": "Пациенттер тізімі",
+    "search": "ТАӘ немесе ID бойынша іздеу",
+    "add": "Пациент қосу",
+    "edit": "Өңдеу",
+    "delete": "Жою",
+    "card": "Пациент картасы",
+    "medicalRecordNumber": "Карта нөмірі",
+    "dateOfBirth": "Туған күні",
+    "age": "Жасы",
+    "phone": "Телефон",
+    "doctor": "Дәрігер",
+    "activeCycles": "Белсенді циклдар",
+    "diagnosis": "Диагноз"
+  },
+  "cycles": {
+    "title": "Циклдар",
+    "list": "Циклдар тізімі",
+    "active": "Белсенді",
+    "completed": "Аяқталған",
+    "cancelled": "Тоқтатылған",
+    "startDate": "Басталу күні",
+    "status": "Мәртебесі",
+    "type": "Түрі",
+    "fresh": "Жаңа",
+    "cryo": "Крио"
+  },
+  "roles": {
+    "reproductologist": "Репродуктолог",
+    "embryologist": "Эмбриолог"
+  },
+  "common": {
+    "save": "Сақтау",
+    "cancel": "Болдырмау",
+    "delete": "Жою",
+    "edit": "Өңдеу",
+    "create": "Жасау",
+    "search": "Іздеу",
+    "filter": "Сүзгі",
+    "actions": "Әрекеттер",
+    "loading": "Жүктелуде...",
+    "error": "Қате",
+    "success": "Сәтті",
+    "confirm": "Растау",
+    "back": "Артқа"
+  }
+}
