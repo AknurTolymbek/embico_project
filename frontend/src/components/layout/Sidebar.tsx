@@ -38,19 +38,21 @@ export const Sidebar = () => (
         <span>Пациенты</span>
         <span className="nav-indicator" />
       </NavLink>
-      <div className="nav-caption upcoming-caption">СЛЕДУЮЩИЕ РАЗДЕЛЫ</div>
-      <span className="nav-upcoming">
+      <NavLink to="/cycles" aria-label="Циклы лечения">
         <SyncOutlined />
-        Циклы лечения<small>Скоро</small>
-      </span>
-      <span className="nav-upcoming">
+        <span>Циклы лечения</span>
+        <span className="nav-indicator" />
+      </NavLink>
+      <NavLink to="/lab" aria-label="Лаборатория">
         <ExperimentOutlined />
-        Лаборатория<small>Скоро</small>
-      </span>
-      <span className="nav-upcoming">
+        <span>Лаборатория</span>
+        <span className="nav-indicator" />
+      </NavLink>
+      <NavLink to="/documents" aria-label="Документы">
         <FileTextOutlined />
-        Документы<small>Скоро</small>
-      </span>
+        <span>Документы</span>
+        <span className="nav-indicator" />
+      </NavLink>
     </nav>
     <div className="sidebar-bottom">
       <div className="care-note">

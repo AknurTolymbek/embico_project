@@ -434,3 +434,14 @@
   background: #f0f9f4;
   border: 1px solid #dceee3;
 }
+
+.prediction-probability-group .prediction-subheading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+.prediction-probability-group .prediction-subheading > span {
+  color: #6484b6;
+  font-variant-numeric: tabular-nums;
+}

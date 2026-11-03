@@ -1,17 +1,10 @@
-import { Card, Empty, Typography } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { SyncOutlined } from "@ant-design/icons";
+import { UnderDevelopment } from "../../components/UnderDevelopment";
 
-const { Title } = Typography;
-
-export const CyclesList = () => {
-  const { t } = useTranslation();
-
-  return (
-    <div>
-      <Title level={2}>{t('menu.cycles')}</Title>
-      <Card>
-        <Empty description="Раздел в разработке. Здесь будет список всех циклов ЭКО." />
-      </Card>
-    </div>
-  );
-};
+export const CyclesList = () => (
+  <UnderDevelopment
+    title="Циклы лечения"
+    icon={<SyncOutlined />}
+    description="Здесь появятся циклы ЭКО, этапы лечения и история протоколов пациентов."
+  />
+);

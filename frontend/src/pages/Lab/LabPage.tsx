@@ -1,17 +1,10 @@
-import { Card, Empty, Typography } from 'antd';
-import { useTranslation } from 'react-i18next';
+import { ExperimentOutlined } from "@ant-design/icons";
+import { UnderDevelopment } from "../../components/UnderDevelopment";
 
-const { Title } = Typography;
-
-export const LabPage = () => {
-  const { t } = useTranslation();
-
-  return (
-    <div>
-      <Title level={2}>{t('menu.lab')}</Title>
-      <Card>
-        <Empty description="Раздел в разработке. Здесь будут эмбриологические данные." />
-      </Card>
-    </div>
-  );
-};
+export const LabPage = () => (
+  <UnderDevelopment
+    title="Лаборатория"
+    icon={<ExperimentOutlined />}
+    description="Здесь появятся эмбриологические данные и результаты лабораторных исследований."
+  />
+);
