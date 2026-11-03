@@ -47,6 +47,13 @@ def find_weight_files(models_dir: Path) -> tuple[str | None, list[Path]]:
         files = [p for p in files if p.is_file()]
         if files:
             return mode, files
+    legacy_files = [
+        models_dir / f"gardner_fold{fold}.pt"
+        for fold in range(1, 6)
+    ]
+    legacy_files = [p for p in legacy_files if p.is_file()]
+    if legacy_files:
+        return "legacy", legacy_files
     return None, []
 
 
